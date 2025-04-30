@@ -1,0 +1,12 @@
+*** magic-	Tue Sep 26 14:54:03 1995
+--- magic	Tue Sep 26 14:54:58 1995
+***************
+*** 942,947 ****
+--- 942,948 ----
+  0	string		yz			MGR bitmap
+  6	string		JFIF			JPEG picture
+  0       string          ARF_BEGARF      	PHIGS clear text archive
++ 0	string		\007\040\115\115	Casio QV-10 CAM picture
+  #
+  # Various flavors of x86 UNIX executable/object (other than Xenix, which
+  # is in "microsoft").  DOS is in "ms-dos"; the ambitious soul can do

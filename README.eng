@@ -1,0 +1,144 @@
+QV-10 cam file converter
+$Id: README.eng,v 1.4 1996/08/27 16:25:13 itojun Exp $
+
+
+What's this?
+	This package contains file converter for Casio QV-10 digital camera.
+	It converts Casio CAM file (which is defined by Casio, and the file
+	format have not made public yet) into ppm or jpeg file.
+	Since the author is native-Japanese speaker, this text may not be
+	accurate.  If you have any questions, refer to Japanese version
+	if possible. (or do not hesitate to ask the author)
+
+
+	Casio QV-10 is cute digital camera, though it has one disadvantage
+	to other cameras: data converter's user interface is horrible.
+
+	Data converter provided by Casio has following facilities:
+	1) download single picture,
+	2) download multiple pictures into Casio CAM format, and
+	3) save SINGLE picture in TIFF/PICT format.
+	Therefore, if you would like to reuse images taken by QV-10,
+	you need to download all pictures by facility 2, and then save
+	each pictures ONE BY ONE, using facility 3.
+	If you would like to convert 100 images, you need to use
+	facility 3 one-handred times!!  Jesus.
+
+	We, QV-10 users have long awaited for batch-type file format
+	converter, though CAM format was (and is still) not made public
+	from Casio.
+	On late September 1995, Mr.Iwama (iwama@ti.com) have successfully
+	reverse-engineered the CAM format.  This package contains conversion
+	tools from CAM format to other picture formats.
+
+	(Of course, we are still waiting for Casio's official public release
+	of CAM format.  We definitely waiting for public release of
+	communication protocol between QV-10 and host computer, too.)
+
+	The tool also supports CAM file for QV-100 finemode, which contains
+	640x480 image.
+
+Installation
+	This package have confirmed to work on the following operating systems:
+		BSDI BSD/OS 2.0.1
+		SunSoft SunOS 4.1.4
+		Sony NEWS-OS 4.2.1a+
+	This package is easy-to-port since it has nothing to do with
+	OS-specific functionalities. (NOTE: you may encounter small troubles
+	with Makefile if you don't use 4.4BSD-Lites based make.)
+
+	Anyway, read Makefile.  If you cannot understand, quit now.
+	ask administrators near you.
+
+How to use
+	camdump -1 hoge.cam
+	camdump -2 hoge.cam
+	camdump -3 hoge.cam
+		extracts part of CAM file, and output to standard output.
+		-1 extracts comment area of CAM file.
+		-2 extracts thumbnail area of CAM file.
+		-2 extracts image area of CAM file.
+		This command is provided as debugging tool.  This tool
+		produces useless bitstream, unless you know CAM format well.
+	cat hoge.cam | camdump -[123]
+		camdump accepts CAM file from standard input too.
+
+	camtoppm hoge.cam
+		extracts thumbnail area of CAM file to standard output,
+		in ppm format.  It will produce 52x36 ppm image.
+	cat hoge.cam | camtoppm
+		camtoppm accepts CAM file from standard input too.
+
+	camtojpeg hoge.cam
+		extracts image area of CAM file to standard output,
+		in JPEG format.
+		
+		If the input is CAM file for QV-10/10A/30 image,
+		or QV-100 normal mode image, the command will produce 480x240
+		JPEG image.
+		In this case, CAM file records image in strange aspect ratio.
+		(You know what I mean if you see the output of camtojpeg
+		command)
+		You will have to change aspect ratio of the image into 320x240
+		(or 480x360, I mean X:Y = 4:3) if you would like to see
+		the image what you have taken by QV-10 camera.
+		Refer to "Examples" section, below.
+
+		If the input is CAM file for QV-100 fine mode image,
+		the command will produce 640x480 JPEG image.
+		In this case, you will not need to change the aspect ratio.
+	cat hoge.cam | camtojpeg
+		camtojpeg accepts CAM file from standard input too.
+
+	demacbin <in >out
+		accpepts some file from standard in, truncates MacBinary
+		header, and output the result to standard output.
+
+		Since camdump/camtoppm/camtojpeg skips MacBinary header, you
+		won't need this tool any more.
+
+	NOTE: `hoge' has no meaning.  `hoge' is Japanese word for `foo.'
+
+Examples
+	cjpeg/djpeg are provided from Independent JPEG group.
+	pnm* and ppm* are contained in the pbmplus package.
+	They can be found somewhere on the Internet.
+	Use archie or other tools.
+
+	convert CAM for QV-10/10A/30/100(normal) to JPEG:
+	(image may become dizzy)
+		% camtojpeg hoge.cam | djpeg | pnmscale -xsize 320 -ysize 240 \
+			| cjpeg > hoge.jpg
+	convert CAM for QV-100(fine) to JPEG:
+		% camtojpeg hoge.cam > hoge.jpg
+	convert to GIF:
+		% camtojpeg hoge.cam | djpeg | pnmscale -xsize 320 -ysize 240 \
+			| ppmquant 256 | ppmtogif >hoge.gif
+
+History
+	Omitted.  See Japanese version.
+
+Original author
+	Kazuhiko Iwama
+	<iwama@ti.com> <with@st.rim.or.jp>
+
+	This program has not been made available without his effort.
+	I would like to express my glatitude to him.
+	Refer to <http://www.st.rim.or.jp/~with> for his reverse-engineered
+	results. (written in Japanese)
+
+Disclaimer & Redistribution
+	The author assumes no responsibility for the results for the usage
+	of this package.  Use at your own risk.
+
+	You may freely redistribute this package, if the following conditions
+	are satisfied:
+	- Do not redistribute executable binary only.  Redistribute
+	  source-code with binaries.
+	- If you redistribute modified version, you need to redistribute
+	  the whole source code of your program, including every source
+	  code you modified and every source code you added.
+
+Author
+	Jun-ichiro "itojun" Itoh
+	<itojun@mt.cs.keio.ac.jp> <itojun@csl.sony.co.jp>
