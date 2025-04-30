@@ -5,7 +5,7 @@ OBJS	?= OBJS
 CFLAGS	?= -g -O2
 LIBS	= 
 bindir	= ${exec_prefix}/bin
-CC	= clang-21
+CC	?= cc
 LDCC ?= $(CC)
 
 all:	$(TARGET)
