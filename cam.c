@@ -7,10 +7,23 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#ifdef _WIN32
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 260
+#endif
+#include <io.h>
+#define read _read
+#define write _write
+#define close _close
+#define lseek _lseek
+#define open _open
+#else
 #include <strings.h>
 #include <sys/param.h>
+#include <unistd.h> // Windowsの場合は外す、UNIXなら必要
+#endif
 #include <sys/types.h>
-#include <unistd.h>
 
 /* known area IDs */
 #define AREA_COMMENT 1
@@ -90,7 +103,7 @@ int readhdr(int fd) {
     exit(1);
   }
   /* SunOS dislikes \x00 form. why? */
-  if (bcmp(cam_magic, buf, sizeof(cam_magic)) == 0) {
+  if (memcmp(cam_magic, buf, sizeof(cam_magic)) == 0) {
     goto magicok; /* CAM file signature found. */
   } else {
     /* try MacBinary */
@@ -98,8 +111,8 @@ int readhdr(int fd) {
       perror("read");
       exit(1);
     }
-    if (bcmp(buf + 128, cam_magic, sizeof(cam_magic)) == 0 &&
-        bcmp(buf + 65, cam_macbinsig, sizeof(cam_macbinsig)) == 0) {
+    if (memcmp(buf + 128, cam_magic, sizeof(cam_magic)) == 0 &&
+        memcmp(buf + 65, cam_macbinsig, sizeof(cam_macbinsig)) == 0) {
       goto magicok; /* CAM file signature found. */
     } else {
       return 0; /* is not cam file */
@@ -176,7 +189,11 @@ int main(int argc, char **argv) {
   }
 
   if (argc == 0) {
-    fd = 0; /*stdin*/
+    if (isatty(0)) {
+      fprintf(stderr, "Usage: %s <input.cam>\n", argv[0]);
+      exit(1);
+    }
+    fd = 0; /* stdin */
   } else if (argc == 1) {
     fd = open(*argv, O_RDONLY);
     if (fd < 0) {
@@ -213,7 +230,11 @@ int main(int argc, char **argv) {
   }
 
   if (argc == 0) {
-    fd = 0; /*stdin*/
+    if (isatty(0)) {
+      fprintf(stderr, "Usage: %s <input.cam>\n", argv[0]);
+      exit(1);
+    }
+    fd = 0; /* stdin */
   } else if (argc == 1) {
     fd = open(*argv, O_RDONLY);
     if (fd < 0) {
@@ -258,7 +279,11 @@ int main(int argc, char **argv) {
   }
 
   if (argc == 0) {
-    fd = 0; /*stdin*/
+    if (isatty(0)) {
+      fprintf(stderr, "Usage: %s <input.cam>\n", argv[0]);
+      exit(1);
+    }
+    fd = 0; /* stdin */
   } else if (argc == 1) {
     fd = open(*argv, O_RDONLY);
     if (fd < 0) {

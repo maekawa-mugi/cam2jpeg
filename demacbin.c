@@ -1,11 +1,18 @@
 #include <fcntl.h>
-#include <sys/param.h>
-#include <sys/types.h>
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef _WIN32
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 260
+#endif
+#include <io.h>
+#else
+#include <strings.h>
+#include <sys/param.h>
+#include <unistd.h> // Windowsの場合は外す、UNIXなら必要
+#endif
+#include <sys/types.h>
 
 int main() {
   uint8_t buf[256];
