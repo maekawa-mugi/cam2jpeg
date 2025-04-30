@@ -2,7 +2,12 @@
 #include <sys/param.h>
 #include <fcntl.h>
 
-main()
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+
+int main()
 {
 	u_char	buf[256];
 	int	len;

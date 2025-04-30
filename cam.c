@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 
 /* known area IDs */
 #define	AREA_COMMENT	1

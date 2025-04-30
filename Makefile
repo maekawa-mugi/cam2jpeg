@@ -1,14 +1,12 @@
 SRCS	= cam.c demacbin.c
 HDRS	= cam2jpgtab.h
 TARGET	= camdump camtoppm camtojpeg demacbin
-OBJS	=
-DESTDIR	= /usr/local/bin
-# for BSD/OS 2.0
-CC	= cc
-LDCC	= shlicc
-# for other systems
-#CC	= cc
-#LDCC	= $(CC)
+OBJS	?= OBJS
+CFLAGS	?= -g -O2
+LIBS	= 
+bindir	= ${exec_prefix}/bin
+CC	= clang-21
+LDCC ?= $(CC)
 
 all:	$(TARGET)
 
@@ -24,17 +22,13 @@ camtojpeg:	cam.c cam2jpgtab.h
 demacbin:	demacbin.c
 	$(LDCC) $(CFLAGS) -o demacbin demacbin.c
 
-.if defined(DESTDIR)
 install:
-	install -c -s -o bin -g bin -m 555 camdump $(DESTDIR)/camdump
-	install -c -s -o bin -g bin -m 555 camtoppm $(DESTDIR)/camtoppm
-	install -c -s -o bin -g bin -m 555 camtojpeg $(DESTDIR)/camtojpeg
-	install -c -s -o bin -g bin -m 555 demacbin $(DESTDIR)/demacbin
-.endif
+	install -c -s -o bin -g bin -m 555 camdump $(bindir)/camdump
+	install -c -s -o bin -g bin -m 555 camtoppm $(bindir)/camtoppm
+	install -c -s -o bin -g bin -m 555 camtojpeg $(bindir)/camtojpeg
+	install -c -s -o bin -g bin -m 555 demacbin $(bindir)/demacbin
 
 clean:
 	/bin/rm $(TARGET) $(OBJS)
 
-shar:	cam2jpeg.shar
-cam2jpeg.shar:	README.eng README Makefile $(SRCS) $(HDRS) magic.diff
-	shar -T README.eng README Makefile $(SRCS) $(HDRS) magic.diff > cam2jpeg.shar
+.PHONY: all clean install camdump camtoppm camtojpeg demacbin
