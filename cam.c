@@ -4,6 +4,7 @@
  * $Id: cam.c,v 1.7 1996/08/27 16:26:40 itojun Exp $
  */
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -19,27 +20,27 @@
 
 /* area information */
 struct areainfo {
-  u_short id;
-  u_int len;
+  uint16_t id;
+  uint32_t len;
 };
 
 static int narea;
 static struct areainfo *areahdr = (struct areainfo *)NULL;
 
-u_short get_u_short(u_char *buf) { return ((u_short)buf[0] << 8) | buf[1]; }
+uint16_t get_uint16_t(uint8_t *buf) { return ((uint16_t)buf[0] << 8) | buf[1]; }
 
-u_int get_u_int(u_char *buf) {
-  u_int t;
+uint32_t get_uint32_t(uint8_t *buf) {
+  uint32_t t;
 
-  t = (((u_int)buf[0] << 8) | buf[1]) << 16;
+  t = (((uint32_t)buf[0] << 8) | buf[1]) << 16;
   ;
-  t |= ((u_int)buf[2] << 8) | buf[3];
+  t |= ((uint32_t)buf[2] << 8) | buf[3];
   ;
   return t;
 }
 
 void skipfile(int fd, int len) {
-  u_char buf[256];
+  uint8_t buf[256];
   int l;
 
   while (len > 0) {
@@ -53,7 +54,7 @@ void skipfile(int fd, int len) {
 }
 
 void copyfile(int fd1, int fd2, int len) {
-  u_char buf[256];
+  uint8_t buf[256];
   int l;
 
   while (len > 0) {
@@ -72,11 +73,11 @@ void copyfile(int fd1, int fd2, int len) {
 }
 
 int readhdr(int fd) {
-  u_char buf[256];
+  uint8_t buf[256];
   int ret;
   int i;
-  static u_char cam_magic[] = {0x07, 0x20, 0x4d, 0x4d};
-  static u_char cam_macbinsig[] = {'C', 'A', 'M', 'f', 'Q', 'V', 'T', 'm'};
+  static uint8_t cam_magic[] = {0x07, 0x20, 0x4d, 0x4d};
+  static uint8_t cam_macbinsig[] = {'C', 'A', 'M', 'f', 'Q', 'V', 'T', 'm'};
 
   /*
    * lseek(fd) assumed to be 0.
@@ -113,7 +114,7 @@ magicok:
     perror("read");
     exit(1);
   }
-  narea = get_u_short(buf);
+  narea = get_uint16_t(buf);
   areahdr = (struct areainfo *)calloc(sizeof(struct areainfo), narea);
   if (areahdr == (struct areainfo *)NULL) {
     perror("calloc");
@@ -124,8 +125,8 @@ magicok:
       perror("read(in seektoarea)");
       exit(1);
     }
-    areahdr[i].id = get_u_short(buf);
-    areahdr[i].len = get_u_int(buf + 2);
+    areahdr[i].id = get_uint16_t(buf);
+    areahdr[i].len = get_uint32_t(buf + 2);
   }
   /*
    * lseek(fd) assumed to be (4 + 2 + 16*narea).
@@ -133,7 +134,7 @@ magicok:
   return 1; /*ok*/
 }
 
-struct areainfo *skiptoarea(int fd, u_short areaid) {
+struct areainfo *skiptoarea(int fd, uint16_t areaid) {
   int i;
   int len;
 
@@ -153,7 +154,7 @@ struct areainfo *skiptoarea(int fd, u_short areaid) {
 #ifdef CAMDUMP
 int main(int argc, char **argv) {
   char *s;
-  u_short areaid = 0;
+  uint16_t areaid = 0;
   int fd;
   struct areainfo *a;
 
@@ -244,11 +245,11 @@ int main(int argc, char **argv) {
   char *s;
   int fd;
   int len;
-  u_char buf[256];
+  uint8_t buf[256];
   struct areainfo *a;
 
-  u_short njarea;
-  u_short ysize, usize, vsize;
+  uint16_t njarea;
+  uint16_t ysize, usize, vsize;
 
   while (--argc > 0 && **++argv == '-') {
     for (s = argv[0] + 1; *s != '\0'; s++) {
@@ -283,10 +284,10 @@ int main(int argc, char **argv) {
       perror("read(reading JFIF header)");
       exit(1);
     }
-    njarea = get_u_short(buf);
-    ysize = get_u_short(buf + 2);
-    usize = get_u_short(buf + 4);
-    vsize = get_u_short(buf + 6);
+    njarea = get_uint16_t(buf);
+    ysize = get_uint16_t(buf + 2);
+    usize = get_uint16_t(buf + 4);
+    vsize = get_uint16_t(buf + 6);
     if (njarea != 3) {
       fprintf(stderr, "JFIF area# != 3, not supported\n");
       exit(1);

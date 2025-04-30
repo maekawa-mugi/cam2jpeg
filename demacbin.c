@@ -2,12 +2,13 @@
 #include <sys/param.h>
 #include <sys/types.h>
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
 int main() {
-  u_char buf[256];
+  uint8_t buf[256];
   int len;
 
   if ((len = read(0, buf, 128)) < 0)
