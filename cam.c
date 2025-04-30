@@ -274,10 +274,10 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  if (a = skiptoarea(fd, AREA_JFIF100)) {
+  if ((a = skiptoarea(fd, AREA_JFIF100))) {
     /* this is qv100 cam file. */
     copyfile(fd, 1, a->len);
-  } else if (a = skiptoarea(fd, AREA_JFIF10)) {
+  } else if ((a = skiptoarea(fd, AREA_JFIF10))) {
     /* this is qv10 cam file. */
     if (read(fd, buf, 8) < 0) {
       perror("read(reading JFIF header)");
